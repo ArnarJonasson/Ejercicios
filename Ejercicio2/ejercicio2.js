@@ -135,7 +135,7 @@ const getCatsArray = (processedData) => {
 
 const getDatesArray = (processedData) => {
 
-  let dateIsInArray = false
+  let dateIsInArray = false;
   let datesArray = [];
   processedData.forEach(item => {
     dateIsInArray = false;
@@ -159,7 +159,7 @@ const divideArrayByCategory = (cats, processedData)=> {
     function catFilter(item){
       if(item[INDEX.cat] === cat) { return item; }
     }
-    dividedArray.push(filtered)
+    dividedArray.push(filtered);
   });
   return dividedArray;
   
