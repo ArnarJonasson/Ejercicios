@@ -2,7 +2,7 @@
 
 These exercises are in two parts.
 
-Ejercicio1 contains a simple Python program that reads numbers from a list and prints out whether the number is a perfect, abundant or defective.
+Ejercicio1 contains a simple Python program that reads numbers from a list and prints out whether the number is perfect, abundant or defective.
 
 Ejercicio2 contains a barebones index.html which main purpose is to run the associated ejercicio2.js JavaScript file.
 
