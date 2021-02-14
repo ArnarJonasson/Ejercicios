@@ -155,10 +155,7 @@ const divideArrayByCategory = (cats, processedData)=> {
 
   let dividedArray = [];
   cats.forEach(cat => {
-    let filtered = processedData.filter(catFilter);
-    function catFilter(item){
-      if(item[INDEX.cat] === cat) { return item; }
-    }
+    let filtered = processedData.filter(item => item[INDEX.cat] === cat);
     dividedArray.push(filtered);
   });
   return dividedArray;
@@ -192,9 +189,7 @@ const getValuesObjectForPieChart = (dataByCat) => {
 
   let finalObj = [];
   dataByCat.forEach(cat => {
-    let sum = cat.reduce(function(passedIn, item){
-      return passedIn + item[INDEX.value];
-    }, 0);
+    let sum = cat.reduce((passedIn, item) => passedIn + item[INDEX.value], 0);
     finalObj.push({ name: cat[0][INDEX.cat], y: sum });
   });
   return finalObj;
@@ -261,10 +256,10 @@ const drawPieChart = (valuesObjectPie) => {
 const dataService = () => {
 
   const getAllData = async (urls) => {
-    return await Promise.all(urls.map((url) => getData('GET', url)).flat())
+    return await Promise.all(urls.map((url) => request('GET', url)).flat())
   };
 
-  const getData = (method, url) => {
+  const request = (method, url) => {
     const promise = new Promise((resolve, reject) => {
       const xhr = new XMLHttpRequest();
       xhr.open(method, url);
