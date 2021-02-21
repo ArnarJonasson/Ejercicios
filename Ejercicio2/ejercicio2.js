@@ -1,5 +1,5 @@
 
-'use strict'
+'use strict';
 
 const URLS = [
   'https://s3.amazonaws.com/logtrust-static/test/test/data1.json', 
@@ -22,18 +22,18 @@ window.onload = async () => {
   const processedData = processData(allData)
   drawCharts(processedData)
 
-};
+}
 
 
 const processData = (allData) => {
     
-  let dataArray = parseUsingRegex(allData.flat())
-  dataArray = convertDataTypesByIndex(dataArray, INDEX.date)
-  dataArray = convertDataTypesByIndex(dataArray, INDEX.cat)
-  dataArray = convertDataTypesByIndex(dataArray, INDEX.value)
-  dataArray = sortAscendingByIndex(dataArray, INDEX.date)
-  dataArray = sortAscendingByIndex(dataArray, INDEX.cat)
-  dataArray = sumTogetherDoubleData(dataArray)
+  let dataArray =           parseUsingRegex(allData.flat())
+  dataArray =               convertDataTypesByIndex(dataArray, INDEX.date)
+  dataArray =               convertDataTypesByIndex(dataArray, INDEX.cat)
+  dataArray =               convertDataTypesByIndex(dataArray, INDEX.value)
+  dataArray =               sortAscendingByIndex(dataArray, INDEX.date)
+  dataArray =               sortAscendingByIndex(dataArray, INDEX.cat)
+  dataArray =               sumTogetherDoubleData(dataArray)
   return dataArray
 
 }
@@ -41,11 +41,12 @@ const processData = (allData) => {
 
 const drawCharts = (processedData) => {
 
-  const categories = getCatsArray(processedData)
-  const datesArray = getDatesArray(processedData)
-  const dataByCat = divideArrayByCategory(categories, processedData)
-  const valuesObjectLine = getValuesObjectForLineChart(datesArray, dataByCat)
-  const valuesObjectPie = getValuesObjectForPieChart(dataByCat)
+  const categories =        getUniqueValuesArray(processedData, INDEX.cat)
+  const datesArray =        getUniqueValuesArray(processedData, INDEX.date)
+  const dataByCat =         divideArrayByCategory(categories, processedData)
+  const valuesObjectLine =  getValuesObjectForLineChart(datesArray, dataByCat)
+  const valuesObjectPie =   getValuesObjectForPieChart(dataByCat)
+
   drawLineChart(datesArray, valuesObjectLine)
   drawPieChart(valuesObjectPie)
 
@@ -122,41 +123,22 @@ const sumTogetherDoubleData = (dataArray) => {
 }
 
 
-const getCatsArray = (processedData) => {
+const getUniqueValuesArray = (processedData, index) => {
 
-  let cats = []
+  let uniquesArr = []
   processedData.forEach(item => {
-    if( !cats.includes(item[INDEX.cat]) ) { cats.push(item[INDEX.cat]) }
+    if( !uniquesArr.includes(item[index]) ) { uniquesArr.push(item[index]) }
   })
-  return cats
+  return uniquesArr
 
 }
 
 
-const getDatesArray = (processedData) => {
-
-  let dateIsInArray = false
-  let datesArray = []
-  processedData.forEach(item => {
-    dateIsInArray = false
-    datesArray.forEach(dateItem => {
-      if (item[INDEX.date] === dateItem){
-          dateIsInArray = true
-      }
-    })
-    if (dateIsInArray === false) { datesArray.push(item[INDEX.date]) }
-  })
-  return datesArray
-
-}
-
-
-const divideArrayByCategory = (cats, processedData)=> {
+const divideArrayByCategory = (cats, processedData) => {
 
   let dividedArray = []
   cats.forEach(cat => {
-    let filtered = processedData.filter(item => item[INDEX.cat] === cat)
-    dividedArray.push(filtered)
+    dividedArray.push(processedData.filter(item => item[INDEX.cat] === cat))
   })
   return dividedArray
   
@@ -229,19 +211,19 @@ const drawPieChart = (valuesObjectPie) => {
       pointFormat: '{series.name}: <b>{point.percentage:.1f}%</b>'
     },
     accessibility: {
-        point: {
-            valueSuffix: '%'
-        }
+      point: {
+        valueSuffix: '%'
+      }
     },
     plotOptions: {
-        pie: {
-            allowPointSelect: true,
-            cursor: 'pointer',
-            dataLabels: {
-              enabled: true,
-              format: '<b>{point.name}</b>: {point.percentage:.1f} %'
-            },
-        }
+      pie: {
+        allowPointSelect: true,
+        cursor: 'pointer',
+        dataLabels: {
+          enabled: true,
+          format: '<b>{point.name}</b>: {point.percentage:.1f} %'
+        },
+      }
     },
     series: [{
       name: 'Percentage',
@@ -261,16 +243,16 @@ const dataService = () => {
 
   const request = (method, url) => {
     const promise = new Promise((resolve, reject) => {
-      const xhr = new XMLHttpRequest();
-      xhr.open(method, url);
+      const xhr = new XMLHttpRequest()
+      xhr.open(method, url)
       xhr.onload = () => { 
-        if(xhr.status >= 400){ reject(xhr.response); } 
-        else { resolve(JSON.parse(xhr.response)); };
+        if(xhr.status >= 400){ reject(xhr.response) } 
+        else { resolve(JSON.parse(xhr.response)) }
       }
-      xhr.onerror = () => { reject('Could not connect to API'); };
-      xhr.send();
+      xhr.onerror = () => { reject('Could not connect to API'); }
+      xhr.send()
     })
-    return promise;
+    return promise
   }
 
   return {
