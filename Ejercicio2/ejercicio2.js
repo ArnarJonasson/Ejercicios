@@ -259,11 +259,3 @@ const dataService = () => {
   }
 
 }
-
-
-function timer(fn) {
-  var start = new Date().getTime()
-  fn()
-  var end = new Date().getTime()
-  console.log(end - start) 
-}
