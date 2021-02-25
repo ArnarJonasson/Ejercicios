@@ -8,7 +8,7 @@ const URLS = [
 ]
 const REGEX = { 
   date: /[0-9]{4}-[0-9]{2}-[0-9]{2}/g, 
-  milliseconds: /[0-9]{8}[0]{5}/g,
+  utc: /[0-9]{8}[0]{5}/g,
   cat: /cat\s./gi,
   value: /[0-9]{1,3}\.[0-9]{10,15}/g
 }
@@ -25,7 +25,7 @@ window.onload = async () => {
 }
 
 
-const processData = (allData) => {
+const processData = allData => {
     
   let dataArray =           parseUsingRegex(allData.flat())
   dataArray =               convertDataTypesByIndex(dataArray, INDEX.date)
@@ -39,13 +39,13 @@ const processData = (allData) => {
 }
 
 
-const drawCharts = (processedData) => {
+const drawCharts = processedData => {
 
   const categories =        getUniqueValuesArray(processedData, INDEX.cat)
   const datesArray =        getUniqueValuesArray(processedData, INDEX.date)
   const dataByCat =         divideArrayByCategory(categories, processedData)
-  const valuesObjectLine =  getValuesObjectForLineChart(datesArray, dataByCat)
-  const valuesObjectPie =   getValuesObjectForPieChart(dataByCat)
+  const valuesObjectLine =  prepareForLineChart(datesArray, dataByCat)
+  const valuesObjectPie =   prepareForPieChart(dataByCat)
 
   drawLineChart(datesArray, valuesObjectLine)
   drawPieChart(valuesObjectPie)
@@ -53,7 +53,7 @@ const drawCharts = (processedData) => {
 }
 
 
-let parseUsingRegex = (allData) => {
+let parseUsingRegex = allData => {
 
   let parsedData = []
   allData.forEach(dataRow => {
@@ -80,8 +80,7 @@ const convertDataTypesByIndex = (dataArray, index) => {
     if(obj[index].match(REGEX.date)) { newVal = new Date(obj[index]).getTime() }
     if(obj[index].match(REGEX.cat)) { newVal = obj[index].toUpperCase() }
     if(obj[index].match(REGEX.value)) { newVal = parseFloat(obj[index]) }
-    if(obj[index].match(REGEX.milliseconds)) { 
-      newVal = parseInt(obj[index].match(REGEX.milliseconds)) }
+    if(obj[index].match(REGEX.utc)) { newVal = parseInt(obj[index].match(REGEX.utc)) }
     obj.splice(index, 1, newVal)
   })
   return dataArray
@@ -101,7 +100,7 @@ const sortAscendingByIndex = (dataArray, index) => {
 }
 
 
-const sumTogetherDoubleData = (dataArray) => {
+const sumTogetherDoubleData = dataArray => {
 
   let lastCat = 0, lastTime = 0, lastValue = 0, newValue = 0
   let combinedValues = []
@@ -145,7 +144,7 @@ const divideArrayByCategory = (cats, processedData) => {
 }
 
 
-const getValuesObjectForLineChart = (datesArray, dataByCat) => {
+const prepareForLineChart = (datesArray, dataByCat) => {
 
   let timeSeriesArr = [], finalObj = [], valueExists = false
   dataByCat.forEach(catItem => { 
@@ -167,7 +166,7 @@ const getValuesObjectForLineChart = (datesArray, dataByCat) => {
 }
 
 
-const getValuesObjectForPieChart = (dataByCat) => {
+const prepareForPieChart = dataByCat => {
 
   let finalObj = []
   dataByCat.forEach(cat => {
@@ -202,7 +201,7 @@ const drawLineChart = (datesArray, valuesObjectLine) => {
 }
 
 
-const drawPieChart = (valuesObjectPie) => {
+const drawPieChart = valuesObjectPie => {
 
   Highcharts.chart('pieChart', {
     chart: { type: 'pie' },
@@ -249,7 +248,7 @@ const dataService = () => {
         if(xhr.status >= 400){ reject(xhr.response) } 
         else { resolve(JSON.parse(xhr.response)) }
       }
-      xhr.onerror = () => { reject('Could not connect to API'); }
+      xhr.onerror = () => { reject('Could not connect to API') }
       xhr.send()
     })
     return promise
@@ -259,4 +258,12 @@ const dataService = () => {
     getAllData
   }
 
+}
+
+
+function timer(fn) {
+  var start = new Date().getTime()
+  fn()
+  var end = new Date().getTime()
+  console.log(end - start) 
 }
